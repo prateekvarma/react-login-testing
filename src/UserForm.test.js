@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import user from '@testing-library/user-event';
 import UserForm from './UserForm';
 
@@ -17,13 +17,24 @@ test('it calls onUserAdd when the form is submitted', () => {
 
   render(<UserForm onUserAdd={mock} />);
 
-  const [nameInput, emailInput] = screen.getAllByRole('textbox');
-  const button = screen.getByRole('button');
+  const nameInput = screen.getByRole('textbox', {
+    name: /name/i,
+  });
+  const emailInput = screen.getByRole('textbox', {
+    name: /email/i,
+  });
 
   user.click(nameInput);
-  user.keyboard('jane');
+  act(() => {
+    user.keyboard('jane');
+  });
+
   user.click(emailInput);
-  user.keyboard('jane@jane.com');
+  act(() => {
+    user.keyboard('jane@jane.com');
+  });
+
+  const button = screen.getByRole('button');
   user.click(button);
 
   expect(mock).toHaveBeenCalled();
